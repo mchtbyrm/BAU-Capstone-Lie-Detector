@@ -3,6 +3,7 @@ import serial
 import time
 
 
+# This method will send random values to the serial port
 def send_random_values_to_serial():
     ser = serial.Serial('COM2', 9600, timeout=1)
     names = ['1', '2', '3', '4', '5']
