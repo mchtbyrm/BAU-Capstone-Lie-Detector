@@ -12,7 +12,7 @@ def send_random_values_to_serial():
         value1 = random.uniform(0, 10)
         value2 = random.uniform(0, 10)
         line = f"{name},{value1},{value2}\n"
-        ser.write(line.encode())
+        ser.write(line.encode()) 
         print(line)
         time.sleep(1)
 
