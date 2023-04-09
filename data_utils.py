@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -31,6 +32,20 @@ def show_histograms(df, cols):
         plt.show()
 
 
+# show the jointplots of the dataset for each feature
+def create_jointplot(df, cols):
+    for label in cols[:-1]:
+        for label2 in cols[:-1]:
+            sns.jointplot(x=label, y=label2, data=df)
+            plt.show()
+
+
+# show the pairplots of the dataset for each feature
+def create_pairplot(df, cols):
+    sns.pairplot(df, hue="Class")
+    plt.show()
+
+
 # split the dataset into training and testing sets
 def split_data(df, cols):
     x = df[cols[:-1]].values
@@ -60,7 +75,7 @@ def scale_data(x):
     return x_scaled_with_first_column
 
 
-# reshape the data. this is important because the data is in the form of a 2D array
+# reshape the data. this is important because the data must be in the shape (n_samples, n_features)
 def reshape_data(x, y):
     data = np.hstack((x, np.reshape(y, (-1, 1))))
     return data
