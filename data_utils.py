@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
@@ -56,3 +57,9 @@ def scale_data(x):
     scaler = StandardScaler()
     x_scaled = scaler.fit_transform(x)
     return x_scaled
+
+
+# reshape the data. this is important because the data is in the form of a 2D array
+def reshape_data(x, y):
+    data = np.hstack((x, np.reshape(y, (-1, 1))))
+    return data
