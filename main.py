@@ -25,6 +25,10 @@ test_data = reshape_data(x_test, y_test)
 print(train_data.shape)
 print(test_data.shape)
 
+df_scaled = pd.DataFrame(x_train, columns=cols[:-1])
+df_scaled['Class'] = y_train
+print(df_scaled.head())
+
 # read_serial()
 
 

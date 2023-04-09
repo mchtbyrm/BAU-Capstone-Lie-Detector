@@ -55,8 +55,9 @@ def oversample_data(x, y):
 # the range of the values of the other feature is 0-1000
 def scale_data(x):
     scaler = StandardScaler()
-    x_scaled = scaler.fit_transform(x)
-    return x_scaled
+    x_scaled = scaler.fit_transform(x[:, 1:])  # scale all the columns except the first one
+    x_scaled_with_first_column = np.insert(x_scaled, 0, x[:, 0], axis=1)  # insert the first column
+    return x_scaled_with_first_column
 
 
 # reshape the data. this is important because the data is in the form of a 2D array
