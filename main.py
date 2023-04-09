@@ -1,4 +1,7 @@
+import pandas as pd
 from ReadSerialPort.read_serial_port import read_serial
+from ReadSerialPort.read_serial_port2 import read_data
+from generate_features import calculate_features
 from data_utils import *
 from Models.logistic_regression import logistic_regression
 from Models.kNN import k_nearest_neighbors, choose_k
@@ -40,16 +43,32 @@ print(df_scaled.head())
 
 # predictions = logistic_regression(x_train, y_train, x_test)
 
-# choose_k(x_train, y_train, x_test, y_test)
-#
-# predictions = k_nearest_neighbors(x_train, y_train, x_test, 1)
+choose_k(x_train, y_train, x_test, y_test)
+
+model, predictions = k_nearest_neighbors(x_train, y_train, x_test, 1)
 
 # predictions = gaussian_naive_bayes(x_train, y_train, x_test)
 
-predictions = support_vector_machines(x_train, y_train, x_test)
+# predictions = support_vector_machines(x_train, y_train, x_test)
 
 evaluate_model(predictions, y_test)
 
 # read_serial()
+
+bpm_data, gsr_data = read_data('COM1', 20)
+print(bpm_data)
+print(gsr_data)
+features = calculate_features(bpm_data, gsr_data)
+features = features.reshape(1, -1)
+features_scaled = scale_data(features)
+print(features)
+
+print("*****************************************************************")
+
+if model.predict(features) == 1:
+    print("The subject is telling the truth")
+else:
+    print("The subject is lying")
+
 
 
