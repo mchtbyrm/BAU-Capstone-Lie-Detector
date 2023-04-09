@@ -9,7 +9,7 @@ def support_vector_machines(x_train, y_train, x_test):
     model.fit(x_train, y_train)
     # make predictions
     predictions = model.predict(x_test)
-    return predictions
+    return model, predictions
 
 
 def choose_parameters(x_train, y_train):

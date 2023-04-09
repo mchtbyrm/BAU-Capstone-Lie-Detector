@@ -11,7 +11,7 @@ def k_nearest_neighbors(x_train, y_train, x_test, k):
     model.fit(x_train, y_train)
     # make predictions
     predictions = model.predict(x_test)
-    return predictions
+    return model, predictions
 
 
 # choose the best k value
@@ -29,5 +29,4 @@ def choose_k(x_train, y_train, x_test, y_test):
     plt.title('Error Rate vs K Value')
     plt.xlabel('K')
     plt.ylabel('Error')
-    plt.legend()
     plt.show()
