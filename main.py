@@ -6,7 +6,7 @@ from data_utils import *
 from Models.logistic_regression import logistic_regression
 from Models.kNN import k_nearest_neighbors, choose_k
 from Models.naive_bayes import gaussian_naive_bayes
-from Models.support_vector_machines import support_vector_machines
+from Models.support_vector_machines import support_vector_machines, choose_parameters
 from Models.evaluation import evaluate_model
 
 
@@ -41,21 +41,24 @@ df_scaled = pd.DataFrame(x_train, columns=cols[:-1])
 df_scaled['Class'] = y_train
 print(df_scaled.head())
 
-# predictions = logistic_regression(x_train, y_train, x_test)
+# model, predictions = logistic_regression(x_train, y_train, x_test)
 
-choose_k(x_train, y_train, x_test, y_test)
+# choose_k(x_train, y_train, x_test, y_test)
+#
+# model, predictions = k_nearest_neighbors(x_train, y_train, x_test, 1)
 
-model, predictions = k_nearest_neighbors(x_train, y_train, x_test, 1)
+# model, predictions = gaussian_naive_bayes(x_train, y_train, x_test)
 
-# predictions = gaussian_naive_bayes(x_train, y_train, x_test)
+best_params = choose_parameters(x_train, y_train)
 
-# predictions = support_vector_machines(x_train, y_train, x_test)
+model, predictions = support_vector_machines(x_train, y_train, x_test, best_params['C'], best_params['gamma'],
+                                             best_params['kernel'])
 
 evaluate_model(predictions, y_test)
 
 # read_serial()
 
-bpm_data, gsr_data = read_data('COM1', 20)
+bpm_data, gsr_data = read_data('COM1', 60)
 print(bpm_data)
 print(gsr_data)
 features = calculate_features(bpm_data, gsr_data)
