@@ -55,11 +55,11 @@ print(df_scaled.head())
 # model, predictions = support_vector_machines(x_train, y_train, x_test, best_params['C'], best_params['gamma'],
 #                                              best_params['kernel'])
 
-model, predictions = decision_tree(x_train, y_train, x_test)
+# model, predictions = decision_tree(x_train, y_train, x_test)
 
-# best_n_estimators = choose_n_estimators(x_train, y_train, x_test, y_test)
-#
-# model, predictions = random_forest(x_train, y_train, x_test, best_n_estimators)
+best_n_estimators = choose_n_estimators(x_train, y_train, x_test, y_test)
+
+model, predictions = random_forest(x_train, y_train, x_test, best_n_estimators)
 
 evaluate_model(predictions, y_test)
 
