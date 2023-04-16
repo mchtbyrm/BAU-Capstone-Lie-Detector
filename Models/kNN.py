@@ -23,6 +23,8 @@ def choose_k(x_train, y_train, x_test, y_test):
         model = model.fit(x_train, y_train)
         pred_i = model.predict(x_test)
         error.append(np.mean(pred_i != y_test))
+    # Find the index of the lowest error rate
+    best_index = error.index(min(error))
     plt.figure(figsize=(10, 6))  # figsize=(a, b) a is width, b is height
     plt.plot(range(1, 40), error, color='red', linestyle='dashed', marker='o',
              markerfacecolor='blue', markersize=10)
@@ -30,3 +32,7 @@ def choose_k(x_train, y_train, x_test, y_test):
     plt.xlabel('K')
     plt.ylabel('Error')
     plt.show()
+
+    print(f"Best k value: {best_index + 1}")
+
+    return best_index + 1

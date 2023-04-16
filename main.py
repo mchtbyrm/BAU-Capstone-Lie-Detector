@@ -44,9 +44,9 @@ print(df_scaled.head())
 
 # model, predictions = logistic_regression(x_train, y_train, x_test)
 
-# choose_k(x_train, y_train, x_test, y_test)
-#
-# model, predictions = k_nearest_neighbors(x_train, y_train, x_test, 1)
+k = choose_k(x_train, y_train, x_test, y_test)
+
+model, predictions = k_nearest_neighbors(x_train, y_train, x_test, k)
 
 # model, predictions = gaussian_naive_bayes(x_train, y_train, x_test)
 
@@ -57,9 +57,9 @@ print(df_scaled.head())
 
 # model, predictions = decision_tree(x_train, y_train, x_test)
 
-best_n_estimators = choose_n_estimators(x_train, y_train, x_test, y_test)
-
-model, predictions = random_forest(x_train, y_train, x_test, best_n_estimators)
+# best_n_estimators = choose_n_estimators(x_train, y_train, x_test, y_test)
+#
+# model, predictions = random_forest(x_train, y_train, x_test, best_n_estimators)
 
 evaluate_model(predictions, y_test)
 
