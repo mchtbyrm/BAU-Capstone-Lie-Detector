@@ -1,12 +1,14 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 
 
 # k is the number of neighbors
-def k_nearest_neighbors(x_train, y_train, x_test, k):
+def k_nearest_neighbors(x_train, y_train, x_test):
+    params = choose_k_with_gridsearch(x_train, y_train)
     # create the model
-    model = KNeighborsClassifier(n_neighbors=k)
+    model = KNeighborsClassifier(n_neighbors=params['n_neighbors'])
     # train the model
     model.fit(x_train, y_train)
     # make predictions
@@ -14,25 +16,31 @@ def k_nearest_neighbors(x_train, y_train, x_test, k):
     return model, predictions
 
 
-# choose the best k value
-def choose_k(x_train, y_train, x_test, y_test):
-    error = []
-    # Calculating error for K values between 1 and 40
-    for i in range(1, 40):
-        model = KNeighborsClassifier(n_neighbors=i)
-        model = model.fit(x_train, y_train)
-        pred_i = model.predict(x_test)
-        error.append(np.mean(pred_i != y_test))
-    # Find the index of the lowest error rate
-    best_index = error.index(min(error))
-    plt.figure(figsize=(10, 6))  # figsize=(a, b) a is width, b is height
-    plt.plot(range(1, 40), error, color='red', linestyle='dashed', marker='o',
-             markerfacecolor='blue', markersize=10)
-    plt.title('Error Rate vs K Value')
-    plt.xlabel('K')
-    plt.ylabel('Error')
+def choose_k_with_gridsearch(x_train, y_train):
+    # Define the KNN model
+    knn = KNeighborsClassifier()
+
+    # Define the parameters to search over
+    param_grid = {'n_neighbors': np.arange(1, 40)}
+
+    # Create the GridSearchCV object
+    knn_cv = GridSearchCV(knn, param_grid, cv=5)  # cv is the number of folds. so 5 means 5-fold cross validation
+
+    # Fit the GridSearchCV object to the data
+    knn_cv.fit(x_train, y_train)
+
+    plt.figure()
+    plt.plot(knn_cv.cv_results_['param_n_neighbors'], knn_cv.cv_results_['mean_test_score'], color='red',
+             linestyle='dashed', marker='o', markerfacecolor='blue', markersize=10)
+    plt.xlabel('n_neighbors')
+    plt.ylabel('Mean accuracy')
+    plt.title('Grid Search Results')
     plt.show()
 
-    print(f"Best k value: {best_index + 1}")
+    # Print the best parameter and its accuracy score
+    print(f"Tuned Hyperparameters: {knn_cv.best_params_}")
+    print("Best Accuracy Score: {:.2f}%".format(knn_cv.best_score_ * 100))
 
-    return best_index + 1
+    # Return the best model and its predictions
+    return knn_cv.best_params_
+

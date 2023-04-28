@@ -2,9 +2,11 @@ from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV
 
 
-def support_vector_machines(x_train, y_train, x_test, C, gamma, kernel):
+def support_vector_machines(x_train, y_train, x_test):
+    # find the best hyperparameters
+    params = grid_search_for_svm(x_train, y_train)
     # create the model
-    model = SVC(C=C, gamma=gamma, kernel=kernel)
+    model = SVC(C=params['C'], kernel=params['kernel'])
     # train the model
     model.fit(x_train, y_train)
     # make predictions
@@ -12,18 +14,25 @@ def support_vector_machines(x_train, y_train, x_test, C, gamma, kernel):
     return model, predictions
 
 
-def choose_parameters(x_train, y_train):
+def grid_search_for_svm(x_train, y_train):
     # create the model
     model = SVC()
-    # define the parameter values that should be searched
-    param_grid = {'C': [0.1, 1, 10, 100, 1000], 'gamma': [1, 0.1, 0.01, 0.001, 0.0001], 'kernel': ['rbf']}
-    # instantiate the grid. refit=True means that the best model is refitted to the entire dataset
-    # verbose=3 means that the progress of the grid search is printed
-    grid = GridSearchCV(model, param_grid, refit=True, verbose=3)
-    # fit the grid with data
-    grid.fit(x_train, y_train)
-    # print the best parameters
-    print(grid.best_params_)
-    # print the best estimator
-    print(grid.best_estimator_)
-    return grid.best_params_
+
+    # define the hyperparameter grid
+    param_grid = {'C': [0.1, 1, 10, 100],
+                  'kernel': ['linear', 'poly', 'rbf', 'sigmoid']}
+
+    # create GridSearchCV object
+    # cv: Number of cross - validation splits to use for evaluating the performance of each hyperparameter combination.
+    # n_jobs: Number of CPU cores to use for parallelize the grid search process.
+    # If set to -1, all available cores will be used.
+    grid_search = GridSearchCV(model, param_grid, cv=5, n_jobs=-1)
+
+    # fit the GridSearchCV object to the training data
+    grid_search.fit(x_train, y_train)
+
+    # print the best hyperparameters
+    print("Best hyperparameters: ", grid_search.best_params_)
+
+    # return the best model and its predictions
+    return grid_search.best_params_
