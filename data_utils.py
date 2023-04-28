@@ -68,11 +68,19 @@ def oversample_data(x, y):
 # scale the data. this is important because the features have different ranges
 # for example, the range of the values of the one feature is 0-100 and
 # the range of the values of the other feature is 0-1000
-def scale_data(x):
-    scaler = StandardScaler()
-    x_scaled = scaler.fit_transform(x[:, 1:])  # scale all the columns except the first one
-    x_scaled_with_first_column = np.insert(x_scaled, 0, x[:, 0], axis=1)  # insert the first column
-    return x_scaled_with_first_column
+def scale_data(x, mean=None, std=None):
+    if mean is not None and std is not None:
+        # Select all columns except the first one
+        data_to_scale = x[:, 1:]
+        scaled_data = (data_to_scale - mean) / std
+        # Concatenate the first column and the scaled data horizontally
+        scaled_data = np.insert(scaled_data, 0, x[:, 0], axis=1)  # insert the first column
+        return scaled_data
+    else:
+        scaler = StandardScaler()
+        x_scaled = scaler.fit_transform(x[:, 1:])  # scale all the columns except the first one
+        x_scaled_with_first_column = np.insert(x_scaled, 0, x[:, 0], axis=1)  # insert the first column
+        return x_scaled_with_first_column, scaler.mean_, scaler.scale_
 
 
 # reshape the data. this is important because the data must be in the shape (n_samples, n_features)

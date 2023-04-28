@@ -14,6 +14,7 @@ def calculate_features(bpm_data, gsr_data):
     max_gsr = np.max(gsr_data)
     mean_gsr = np.mean(gsr_data)
     gsr_variability = np.std(gsr_data)
+    # gsr_gradient = np.gradient(gsr_data)  # maybe this feature is not needed
 
     # Return newly calculated features
-    return np.array([1, min_bpm, max_bpm, mean_bpm, hrv, min_gsr, max_gsr, mean_gsr, gsr_variability])
+    return np.array([[1, min_bpm, max_bpm, mean_bpm, hrv, min_gsr, max_gsr, mean_gsr, gsr_variability]])
