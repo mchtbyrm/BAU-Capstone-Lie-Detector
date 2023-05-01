@@ -1,5 +1,5 @@
+from GUI.gui import GUI
 from ReadSerialPort.read_serial_port import read_serial
-from ReadSerialPort.read_serial_port2 import read_extract_scale_predict
 from data_utils import *
 from Models.logistic_regression import logistic_regression
 from Models.kNN import k_nearest_neighbors
@@ -13,9 +13,9 @@ cols = ["Gender", "Min_BPM", "Max_BPM", "Mean_BPM", "HRV", "Min_GSR", "Max_GSR",
 dataframe = read_dataset("lie.csv", cols)
 
 # show_histograms(dataframe, cols)
-#
+
 # create_jointplot(dataframe, cols)
-#
+
 # create_pairplot(dataframe, cols)
 
 x_train, x_test, y_train, y_test = split_data(dataframe, cols)
@@ -48,23 +48,5 @@ model, predictions = k_nearest_neighbors(x_train, y_train, x_test)
 evaluate_model(predictions, y_test)
 
 
-read_extract_scale_predict('COM1', model, mean, std)
-
-
-# bpm_data, gsr_data = read_data('COM1', 60)
-# print(bpm_data)
-# print(gsr_data)
-# features = calculate_features(bpm_data, gsr_data)
-# features = features.reshape(1, -1)
-# features_scaled = scale_data(features)
-# print(features)
-#
-# print("*****************************************************************")
-#
-# if model.predict(features) == 1:
-#     print("The subject is telling the truth")
-# else:
-#     print("The subject is lying")
-
-
-
+ui = GUI(model, mean, std)
+ui.show_ui()
