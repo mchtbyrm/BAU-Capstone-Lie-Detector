@@ -1,71 +1,41 @@
+import threading
 import tkinter as tk
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import random
-
-# create a tinker window
-root = tk.Tk()
-
-# set size of the window
-root.geometry("600x400")
-
-# create a label
-time_label = tk.Label(root, text="The person has not started the test yet.")
-status_label = tk.Label(root, text="Machine is not working.")
-
-# set the position of the label
-time_label.pack(pady=20)
-status_label.pack()
-
-# define a function to be called when the button is clicked
-seconds = [0]
-minutes = [0]
-is_running = [False]
+from ReadSerialPort.read_serial_port2 import read_extract_scale_predict
 
 
-def on_button_click():
-    if not is_running[0]:
-        is_running[0] = True
-        time_label.config(text="The person has been in the polygraph test for {minutes[0]:02d}:{seconds[0]:02d}")
-        status_label.config(text="Machine started to work")
+class GUI:
+    def __init__(self, model, mean, std):
+        self.root = tk.Tk()
+        self.gender = 0
+        self.model = model
+        self.mean = mean
+        self.std = std
 
-        def update_time():
-            if is_running[0]:
-                seconds[0] += 1
-                if seconds[0] == 60:
-                    seconds[0] = 0
-                    minutes[0] += 1
-                time_label.config(text=f"The person has been in the polygraph test for {minutes[0]:02d}:{seconds[0]:02d}")
-                if minutes[0] == 0 and seconds[0] == 10:
-                    result = random.choice(["True", "False"])
-                    plt.clf()
-                    plt.bar(["True", "False"], [result.count("True"), result.count("False")])
-                    canvas.draw()
-                    if result == "True":
-                        status_label.config(text="The person is telling the truth.")
-                    else:
-                        status_label.config(text="The person is lying.")
-                root.after(1000, update_time)
-        update_time()
-    else:
-        is_running[0] = False
-        time_label.config(text=f"The person was tested for {minutes[0]:02d}:{seconds[0]:02d}")
-        status_label.config(text="Machine stopped working")
+    def start_clicked(self):
+        print("Start button clicked")
+        # run the read_extract_scale_predict function in a separate thread
+        t = threading.Thread(target=read_extract_scale_predict,
+                             args=(self.gender, 'COM1', self.model, self.mean, self.std, self.root))
+        t.start()
 
-# create a button
-button = tk.Button(root, text="Start Test", command=on_button_click)
+    def set_gender(self, value):
+        self.gender = value
 
-# set the position of the button
-button.pack(pady=10)
+    def show_ui(self):
+        self.root.geometry("1000x650")
 
-# create a matplotlib figure
-fig = plt.Figure(figsize=(4, 3), dpi=100)
-ax = fig.add_subplot(111)
-ax.set_ylim([0, 1])
-ax.set_ylabel("Probability")
-canvas = FigureCanvasTkAgg(fig, master=root)
-canvas.draw()
-canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=1)
+        # choose gender of subject
+        gender_label = tk.Label(self.root, text="Select gender of subject:")
+        gender_label.pack()
 
-# start the main loop
-root.mainloop()
+        male_button = tk.Radiobutton(self.root, text="Male", value=1, command=lambda: self.set_gender(1))
+        male_button.pack()
+
+        female_button = tk.Radiobutton(self.root, text="Female", value=0, command=lambda: self.set_gender(0))
+        female_button.pack()
+
+        # click start button to call start_clicked function
+        start_button = tk.Button(self.root, text="Start", command=self.start_clicked)
+        start_button.pack()
+
+        self.root.mainloop()
