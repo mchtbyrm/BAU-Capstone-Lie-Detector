@@ -6,7 +6,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from imblearn.over_sampling import RandomOverSampler
 
-
 # read the dataset from the csv file
 def read_dataset(file, cols):
     df = pd.read_csv(file, names=cols)

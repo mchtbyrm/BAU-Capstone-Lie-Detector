@@ -1,4 +1,4 @@
-import serial.tools.list_ports
+import sadkasd.tools.list_ports
 
 
 def list_all_available_serial_ports():

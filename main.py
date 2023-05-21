@@ -12,9 +12,8 @@ cols = ["Gender", "Min_BPM", "Max_BPM", "Mean_BPM", "HRV", "Min_GSR", "Max_GSR",
 
 dataframe = read_dataset("lie.csv", cols)
 
-# show_histograms(dataframe, cols)
-
-# create_jointplot(dataframe, cols)
+#show_histograms(dataframe, cols)
+create_jointplot(dataframe, cols)
 
 # create_pairplot(dataframe, cols)
 
@@ -40,7 +39,7 @@ df_scaled['Class'] = y_train
 print(df_scaled.head())
 
 model, predictions = k_nearest_neighbors(x_train, y_train, x_test)
-# model, predictions = logistic_regression(x_train, y_train, x_test)
+#model, predictions = logistic_regression(x_train, y_train, x_test)
 # model, predictions = gaussian_naive_bayes(x_train, y_train, x_test)
 # model, predictions = support_vector_machines(x_train, y_train, x_test)
 # model, predictions = decision_tree(x_train, y_train, x_test)
