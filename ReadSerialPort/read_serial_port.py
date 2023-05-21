@@ -1,7 +1,6 @@
 import csv
 import serial
 
-
 # Change the port and baudrate to match your Arduino's serial settings
 # port is the serial port your Arduino is connected to
 # baudrate refers to the speed at which data is transferred and is usually 9600
