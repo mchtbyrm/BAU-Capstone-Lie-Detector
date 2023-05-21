@@ -39,10 +39,10 @@ def read_extract_scale_predict(gender, port, model, mean, std, ui):
             read_serial = ser.readline()
             values = read_serial.decode().strip().split(',')
             print(values)
-            if len(values) == 2:
+            if len(values) == 4:
                 try:
-                    hr = float(values[0])
-                    gsr = float(values[1])
+                    gsr = float(values[3])
+                    hr = float(values[1])
                     print(f"HR: {hr}, GSR: {gsr}")
                     data_hr.append(hr)
                     data_gsr.append(gsr)
@@ -61,10 +61,13 @@ def read_extract_scale_predict(gender, port, model, mean, std, ui):
                     print("Invalid data received")
                     continue
         else:
-            time.sleep(5)
-        if len(data_hr) >= 5 and len(data_gsr) >= 5:
-            print(data_hr)
-            print(data_gsr)
+            time.sleep(1)
+        if len(data_hr) >= 50 and len(data_gsr) >= 50:
+            print(len(data_hr))
+            print(len(data_gsr))
+            if len(data_hr) > 50 or len(data_gsr) > 50:
+                data_hr = data_hr[-50:]
+                data_gsr = data_gsr[-50:]
             features = calculate_features(gender, data_hr, data_gsr)
             features = features.reshape(1, -1)
             print(features)
@@ -73,7 +76,7 @@ def read_extract_scale_predict(gender, port, model, mean, std, ui):
                 print([format(elem, ".3f") for elem in row])
 
             print("*****************************************************************")
-
+            print(model.predict_proba(features_scaled))
             if model.predict(features_scaled) == 1:
                 print("The subject is telling the truth")
                 output_label.config(text="The subject is telling the truth", bg="green")
@@ -81,5 +84,3 @@ def read_extract_scale_predict(gender, port, model, mean, std, ui):
                 print("The subject is lying")
                 output_label.config(text="The subject is lying", bg="red")
     ser.close()
-
-

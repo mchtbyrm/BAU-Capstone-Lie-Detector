@@ -20,6 +20,7 @@ def grid_search_for_svm(x_train, y_train):
 
     # define the hyperparameter grid
     param_grid = {'C': [0.1, 1, 10, 100],
+                  'gamma': [1, 0.1, 0.01, 0.001],
                   'kernel': ['linear', 'poly', 'rbf', 'sigmoid']}
 
     # create GridSearchCV object

@@ -1,3 +1,5 @@
+import statistics
+
 import numpy as np
 
 
@@ -8,6 +10,16 @@ def calculate_features(gender, bpm_data, gsr_data):
     max_bpm = np.max(bpm_data)
     mean_bpm = np.mean(bpm_data)
     hrv = np.std(np.diff(bpm_data))
+
+    print("-------------------------------------------------------------------------------")
+    print(np.diff(bpm_data))
+    print(hrv)
+
+    rr_intervals = [60 / bpm for bpm in bpm_data]
+    print(rr_intervals)
+    sdnn = statistics.stdev(rr_intervals)
+    print("SDNN:", sdnn)
+    print("-------------------------------------------------------------------------------")
 
     # Calculate GSR features
     min_gsr = np.min(gsr_data)

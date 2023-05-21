@@ -26,7 +26,7 @@ x_test, y_test = oversample_data(x_test, y_test)
 
 x_train, mean, std = scale_data(x_train)
 
-x_test = scale_data(x_test, mean, std)
+x_test, _, _ = scale_data(x_test)
 
 train_data = reshape_data(x_train, y_train)
 
@@ -45,7 +45,7 @@ model, predictions = k_nearest_neighbors(x_train, y_train, x_test)
 # model, predictions = support_vector_machines(x_train, y_train, x_test)
 # model, predictions = decision_tree(x_train, y_train, x_test)
 # model, predictions = random_forest(x_train, y_train, x_test)
-evaluate_model(predictions, y_test)
+evaluate_model(y_test, predictions)
 
 
 ui = GUI(model, mean, std)

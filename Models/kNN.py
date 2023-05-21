@@ -9,6 +9,7 @@ def k_nearest_neighbors(x_train, y_train, x_test):
     params = choose_k_with_gridsearch(x_train, y_train)
     # create the model
     model = KNeighborsClassifier(n_neighbors=params['n_neighbors'])
+    # model = KNeighborsClassifier(n_neighbors=37)
     # train the model
     model.fit(x_train, y_train)
     # make predictions
