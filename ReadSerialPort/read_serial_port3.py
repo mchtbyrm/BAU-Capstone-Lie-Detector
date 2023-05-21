@@ -86,9 +86,30 @@ def calculate_features(gender):
     num_peaks = len(peaks)  # Number of peaks
     #avg_peak_height = np.mean(gsr_data[peaks]) if peaks.size > 0 else 0  # Average height of peaks
     time_between_peaks = np.mean(np.diff(peaks)) if peaks.size > 1 else 0  # Average time between peaks
+    gsr_gradient = np.gradient(gsr_data)  # maybe this feature is not needed
 
     # Calculate cross-correlation of GSR and BPM data
-    cross_corr = np.correlate(gsr_data - np.mean(gsr_data), bpm_data - np.mean(bpm_data), mode='valid')
+    cross_corr = np.correlate(gsr_data - np.mean(gsr_data), bpm_data - np.mean(bpm_data), mode='valid')[0]
+
+    # Derivative features
+
+    first_derivative_bpm = np.diff(bpm_data)
+    second_derivative_bpm = np.diff(bpm_data, n=2)  # n=2 for second derivative
+
+    first_derivative_gsr = np.diff(gsr_data)
+    second_derivative_gsr = np.diff(gsr_data, n=2)  # n=2 for second derivative
+
+    mean_first_derivative_bpm = np.mean(first_derivative_bpm)
+    std_first_derivative_bpm = np.std(first_derivative_bpm)
+
+    mean_second_derivative_bpm = np.mean(second_derivative_bpm)
+    std_second_derivative_bpm = np.std(second_derivative_bpm)
+
+    mean_first_derivative_gsr = np.mean(first_derivative_gsr)
+    std_first_derivative_gsr = np.std(first_derivative_gsr)
+
+    mean_second_derivative_gsr = np.mean(second_derivative_gsr)
+    std_second_derivative_gsr = np.std(second_derivative_gsr)
 
     # Print all features
     print("-------------------------------------------------------------------------------")
@@ -112,6 +133,19 @@ def calculate_features(gender):
     print("Time Between Peaks: ", time_between_peaks)
     print("-------------------------------------------------------------------------------")
     print("Cross-Correlation: ", cross_corr)
+    print("-------------------------------------------------------------------------------")
+    print("Mean First Derivative BPM: ", mean_first_derivative_bpm)
+    print("Std First Derivative BPM: ", std_first_derivative_bpm)
+    print("-------------------------------------------------------------------------------")
+    print("Mean Second Derivative BPM: ", mean_second_derivative_bpm)
+    print("Std Second Derivative BPM: ", std_second_derivative_bpm)
+    print("-------------------------------------------------------------------------------")
+    print("Mean First Derivative GSR: ", mean_first_derivative_gsr)
+    print("Std First Derivative GSR: ", std_first_derivative_gsr)
+    print("-------------------------------------------------------------------------------")
+    print("Mean Second Derivative GSR: ", mean_second_derivative_gsr)
+    print("Std Second Derivative GSR: ", std_second_derivative_gsr)
+    print("-------------------------------------------------------------------------------")
     print("-------------------------------------------------------------------------------")
 
 
