@@ -44,15 +44,7 @@ def hrv_features(bpm_data, fs):
     # Skewness and Kurtosis
     features['skew'] = stats.skew(rr_intervals)
     features['kurt'] = stats.kurtosis(rr_intervals)
-    cols = ["MEAN_RR", "MEDIAN_RR", "SDRR", "RMSSD", "SDSD", "SDRR_RMSSD", "HR",
-            "pNN25", "pNN50", "SD1", "SD2", "KURT", "SKEW", "MEAN_REL_RR", "MEDIAN_REL_RR",
-            "SDRR_REL_RR", "RMSSD_REL_RR", "SDSD_REL_RR", "SDRR_RMSSD_REL_RR",
-            "KURT_REL_RR", "SKEW_REL_RR", "VLF", "VLF_PCT", "LF", "LF_PCT", "LF_NU",
-            "HF", "HF_PCT", "HF_NU", "TP", "LF_HF", "HF_LF", "GSR_mean_gsr", "GSR_std_gsr",
-            "GSR_max_mean_gsr_diff", "GSR_min_mean_gsr_diff", "GSR_gsr_mode", "GSR_gsr_skewness",
-            "GSR_gsr_kurtosis", "GSR_gsr_max_mode_diff", "GSR_num_peaks", "GSR_time_between_peaks",
-            "GSR_mean_first_derivative_gsr", "GSR_std_first_derivative_gsr", "GSR_mean_second_derivative_gsr",
-            "GSR_std_second_derivative_gsr", "sampen", "higuci", "datasetId", "condition"]
+
     # Calculate frequency-domain HRV metrics
     f, Pxx = signal.welch(rr_intervals, fs=fs)
     vlf = (f <= 0.04)
@@ -102,7 +94,7 @@ def hrv_features(bpm_data, fs):
 
 def calculate_gsr_features(gsr_data):
     features = {}
-
+    
     # Calculate GSR features
     features['mean_gsr'] = np.mean(gsr_data)
     features['std_gsr'] = np.std(gsr_data)
