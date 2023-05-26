@@ -8,17 +8,35 @@ from Models.support_vector_machines import support_vector_machines
 from Models.trees import decision_tree, random_forest
 from Models.evaluation import evaluate_model
 
-cols = ["Gender", "Min_BPM", "Max_BPM", "Mean_BPM", "HRV", "Min_GSR", "Max_GSR", "Mean_GSR", "GSR_Variability", "Class"]
+cols = ["MEAN_RR", "MEDIAN_RR", "SDRR", "RMSSD", "SDSD", "SDRR_RMSSD", "HR",
+        "pNN25", "pNN50", "SD1", "SD2", "KURT", "SKEW", "MEAN_REL_RR", "MEDIAN_REL_RR",
+        "SDRR_REL_RR", "RMSSD_REL_RR", "SDSD_REL_RR", "SDRR_RMSSD_REL_RR",
+        "KURT_REL_RR", "SKEW_REL_RR", "VLF", "VLF_PCT", "LF", "LF_PCT", "LF_NU",
+        "HF", "HF_PCT", "HF_NU", "TP", "LF_HF", "HF_LF", "GSR_mean_gsr", "GSR_std_gsr",
+        "GSR_max_mean_gsr_diff", "GSR_min_mean_gsr_diff", "GSR_gsr_mode", "GSR_gsr_skewness",
+        "GSR_gsr_kurtosis", "GSR_gsr_max_mode_diff", "GSR_num_peaks", "GSR_time_between_peaks",
+        "GSR_mean_first_derivative_gsr", "GSR_std_first_derivative_gsr", "GSR_mean_second_derivative_gsr",
+        "GSR_std_second_derivative_gsr", "sampen", "higuci", "datasetId", "condition"]
 
-dataframe = read_dataset("lie.csv", cols)
+cols2 = ["MEAN_RR", "SDRR", "RMSSD", "SDSD", "SDRR_RMSSD",
+         "pNN25", "pNN50", "SD1", "SD2", "KURT", "SKEW", "MEAN_REL_RR",
+         "SDRR_REL_RR", "RMSSD_REL_RR", "SDSD_REL_RR", "SDRR_RMSSD_REL_RR",
+         "KURT_REL_RR", "SKEW_REL_RR", "VLF", "VLF_PCT", "LF", "LF_PCT", "LF_NU",
+         "HF", "HF_PCT", "HF_NU", "TP", "LF_HF", "HF_LF", "GSR_mean_gsr", "GSR_std_gsr",
+         "GSR_max_mean_gsr_diff", "GSR_min_mean_gsr_diff", "GSR_gsr_mode", "GSR_gsr_skewness",
+         "GSR_gsr_kurtosis", "GSR_gsr_max_mode_diff", "GSR_num_peaks", "GSR_time_between_peaks",
+         "GSR_mean_first_derivative_gsr", "GSR_std_first_derivative_gsr", "GSR_mean_second_derivative_gsr",
+         "GSR_std_second_derivative_gsr", "condition"]
 
-# show_histograms(dataframe, cols)
+dataframe = read_dataset("new_dataset.csv", cols)
 
-# create_jointplot(dataframe, cols)
+# show_histograms(dataframe, cols2)
 
-# create_pairplot(dataframe, cols)
+# create_jointplot(dataframe, cols2)
 
-x_train, x_test, y_train, y_test = split_data(dataframe, cols)
+# create_pairplot(dataframe, cols2)
+
+x_train, x_test, y_train, y_test = split_data(dataframe, cols2)
 
 x_train, y_train = oversample_data(x_train, y_train)
 
@@ -35,17 +53,29 @@ test_data = reshape_data(x_test, y_test)
 print(train_data.shape)
 print(test_data.shape)
 
-df_scaled = pd.DataFrame(x_train, columns=cols[:-1])
+df_scaled = pd.DataFrame(x_train, columns=cols2[:-1])
 df_scaled['Class'] = y_train
 print(df_scaled.head())
 
-model, predictions = k_nearest_neighbors(x_train, y_train, x_test)
+# model, predictions = k_nearest_neighbors(x_train, y_train, x_test)
+model = k_nearest_neighbors(train_data, test_data)
+
 # model, predictions = logistic_regression(x_train, y_train, x_test)
+# model = logistic_regression(train_data, test_data)
+
 # model, predictions = gaussian_naive_bayes(x_train, y_train, x_test)
+# model = gaussian_naive_bayes(train_data, test_data)
+
 # model, predictions = support_vector_machines(x_train, y_train, x_test)
+# model = support_vector_machines(train_data, test_data)
+
 # model, predictions = decision_tree(x_train, y_train, x_test)
+# model = decision_tree(train_data, test_data)
+
 # model, predictions = random_forest(x_train, y_train, x_test)
-evaluate_model(y_test, predictions)
+# model = random_forest(train_data, test_data)
+
+# evaluate_model(y_test, predictions)
 
 
 ui = GUI(model, mean, std)

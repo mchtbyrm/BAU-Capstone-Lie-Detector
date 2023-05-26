@@ -6,7 +6,7 @@ def logistic_regression(x_train, y_train, x_test):
     # call the parameter_tuning function to get the best hyperparameters
     params = parameter_tuning(x_train, y_train)
     # create the model
-    model = LogisticRegression(penalty=params['penalty'], C=params['C'], solver=params['solver'])
+    model = LogisticRegression(penalty=params['penalty'], C=params['C'], solver=params['solver'], max_iter=1000)
     # train the model
     model.fit(x_train, y_train)
     # make predictions

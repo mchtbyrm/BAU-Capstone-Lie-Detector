@@ -1,3 +1,5 @@
+import os
+import joblib
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.model_selection import GridSearchCV
@@ -5,16 +7,28 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 # k is the number of neighbors
-def k_nearest_neighbors(x_train, y_train, x_test):
-    params = choose_k_with_gridsearch(x_train, y_train)
-    # create the model
-    model = KNeighborsClassifier(n_neighbors=params['n_neighbors'])
-    # model = KNeighborsClassifier(n_neighbors=37)
-    # train the model
-    model.fit(x_train, y_train)
-    # make predictions
-    predictions = model.predict(x_test)
-    return model, predictions
+def k_nearest_neighbors(x_train, y_train, x_test=None):
+    model_filename = 'knn_model_lie_detector.joblib'
+
+    # Check if the model file already exists
+    if os.path.exists(model_filename):
+        # Load the existing model from disk
+        model = joblib.load(model_filename)
+        print("Model loaded from disk")
+        return model
+    else:
+        # Model file doesn't exist, train the model
+        params = choose_k_with_gridsearch(x_train, y_train)
+        model = KNeighborsClassifier(n_neighbors=params['n_neighbors'])
+        # model = KNeighborsClassifier(n_neighbors=1)
+        model.fit(x_train, y_train)
+
+        # Save the trained model to disk
+        joblib.dump(model, model_filename)
+
+        # Make predictions
+        predictions = model.predict(x_test)
+        return model, predictions
 
 
 def choose_k_with_gridsearch(x_train, y_train):

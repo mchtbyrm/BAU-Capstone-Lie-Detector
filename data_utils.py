@@ -9,10 +9,15 @@ from imblearn.over_sampling import RandomOverSampler
 
 # read the dataset from the csv file
 def read_dataset(file, cols):
-    df = pd.read_csv(file, names=cols)
-    # sklearn does not work with strings. it only works with numbers.
-    df["Gender"] = (df["Gender"] == "Male").astype(int)  # convert to 0 or 1. If Gender is Male then 1, else 0
-    df["Class"] = (df["Class"] == "Truth").astype(int)  # convert to 0 or 1. If Class is Truth then 1, else 0
+    df = pd.read_csv(file, names=cols, nrows=50000)
+
+    # Exclude specified columns
+    df = df.drop(columns=["MEDIAN_RR", "HR", "sampen", "higuci", "datasetId", "MEDIAN_REL_RR"])
+
+    # sklearn does not work with strings. It only works with numbers.
+    # Convert 'condition' to 1 if it's "no stress", otherwise 0
+    df["condition"] = (df["condition"] == "no stress").astype(int)
+
     print(df.head())  # print the first 5 rows
     print(df.tail())  # print the last 5 rows
     print(df.info())  # print the information about the dataframe
@@ -75,11 +80,18 @@ def scale_data(x, mean=None, std=None):
         scaled_data = (data_to_scale - mean) / std
         # Concatenate the first column and the scaled data horizontally
         scaled_data = np.insert(scaled_data, 0, x[:, 0], axis=1)  # insert the first column
+        print("*******************************************")
+        print("Scaled data: ", scaled_data)
+        print("*******************************************")
         return scaled_data
     else:
         scaler = StandardScaler()
         x_scaled = scaler.fit_transform(x[:, 1:])  # scale all the columns except the first one
         x_scaled_with_first_column = np.insert(x_scaled, 0, x[:, 0], axis=1)  # insert the first column
+        print("*******************************************")
+        print("Mean: ", scaler.mean_)
+        print("Standard deviation: ", scaler.scale_)
+        print("*******************************************")
         return x_scaled_with_first_column, scaler.mean_, scaler.scale_
 
 

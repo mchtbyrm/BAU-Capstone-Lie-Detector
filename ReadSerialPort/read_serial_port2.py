@@ -68,7 +68,7 @@ def read_extract_scale_predict(gender, port, model, mean, std, ui):
             if len(data_hr) > 50 or len(data_gsr) > 50:
                 data_hr = data_hr[-50:]
                 data_gsr = data_gsr[-50:]
-            features = calculate_features(gender, data_hr, data_gsr)
+            features = calculate_features(data_hr, data_gsr)
             features = features.reshape(1, -1)
             print(features)
             features_scaled = scale_data(features, mean, std)
