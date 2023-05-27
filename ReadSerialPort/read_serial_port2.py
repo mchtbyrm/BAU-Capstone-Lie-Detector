@@ -8,7 +8,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 
 
-def read_extract_scale_predict(gender, port, model, mean, std, ui):
+def read_extract_scale_predict(port, model, mean, std, ui):
+
+    start_time = time.time()
     data_hr = []
     data_gsr = []
 
@@ -30,7 +32,7 @@ def read_extract_scale_predict(gender, port, model, mean, std, ui):
     canvas.draw()
     canvas.get_tk_widget().pack(side='top', fill='both', expand=1)
 
-    output_label = tk.Label(ui, text="Output", font=("Helvetica", 16), width=1200)
+    output_label = tk.Label(ui, text="Analyzing...", font=("Helvetica", 16), width=1200)
     output_label.pack()
 
     ser = serial.Serial(port, 9600)
@@ -39,9 +41,9 @@ def read_extract_scale_predict(gender, port, model, mean, std, ui):
             read_serial = ser.readline()
             values = read_serial.decode().strip().split(',')
             print(values)
-            if len(values) == 4:
+            if len(values) == 4 and start_time + 10 < time.time() and float(values[0]) > 0 and float(values[1]) > 0:
                 try:
-                    gsr = float(values[3])
+                    gsr = float(values[0])
                     hr = float(values[1])
                     print(f"HR: {hr}, GSR: {gsr}")
                     data_hr.append(hr)

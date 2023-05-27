@@ -9,7 +9,7 @@ from imblearn.over_sampling import RandomOverSampler
 
 # read the dataset from the csv file
 def read_dataset(file, cols):
-    df = pd.read_csv(file, names=cols, nrows=50000)
+    df = pd.read_csv(file, names=cols, nrows=1000)
 
     # Exclude specified columns
     df = df.drop(columns=["MEDIAN_RR", "HR", "sampen", "higuci", "datasetId", "MEDIAN_REL_RR"])

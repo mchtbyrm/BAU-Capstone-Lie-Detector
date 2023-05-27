@@ -10,50 +10,40 @@ def calculate_hrv_features(bpm_data, fs):
     features = {}
     bpm_data = np.array(bpm_data)
     rr_intervals = 60000 / np.array(bpm_data)
-
+    print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     # mean of RR intervals
     features['mean_rr'] = np.mean(rr_intervals)
+    print("mean_rr: ", features['mean_rr'])
     # standard deviation of RR intervals (SDNN)
     features['sdnn'] = np.std(rr_intervals)
+    print("sdnn: ", features['sdnn'])
     # root mean square of differences of successive RR intervals (RMSSD)
     features['rmssd'] = np.sqrt(np.mean(np.square(np.diff(rr_intervals))))
+    print("rmssd: ", features['rmssd'])
     # standard deviation of differences between all successive RR intervals (SDSD)
     features['sdsd'] = np.std(np.diff(rr_intervals))
+    print("sdsd: ", features['sdsd'])
     # standard deviation of RR intervals divided by RMSSD (SDRR_RMSSD)
     features['sdrr_rmssd'] = features['sdnn'] / features['rmssd']
-    # percentage of successive RR interval differences greater than 50 ms (pNN50)
-    features['pnn50'] = np.sum(np.abs(np.diff(rr_intervals)) > 50) / len(rr_intervals) * 100
+    print("sdrr_rmssd: ", features['sdrr_rmssd'])
     # percentage of successive RR interval differences greater than 25 ms (pNN25)
     features['pnn25'] = np.sum(np.abs(np.diff(rr_intervals)) > 25) / len(rr_intervals) * 100
+    print("pnn25: ", features['pnn25'])
+    # percentage of successive RR interval differences greater than 50 ms (pNN50)
+    features['pnn50'] = np.sum(np.abs(np.diff(rr_intervals)) > 50) / len(rr_intervals) * 100
+    print("pnn50: ", features['pnn50'])
     # SD1 and SD2, the standard deviations of points perpendicular/along the line of identity in the Poincare plot
     diff_rr_intervals = np.diff(rr_intervals)
     features['sd1'] = np.sqrt(np.std(diff_rr_intervals, ddof=1) / 2)
+    print("sd1: ", features['sd1'])
     features['sd2'] = np.sqrt(2 * features['sdnn'] ** 2 - features['sd1'] ** 2)
+    print("sd2: ", features['sd2'])
     # Skewness and Kurtosis
-    features['skew'] = stats.skew(rr_intervals)
     features['kurt'] = stats.kurtosis(rr_intervals)
+    print("kurt: ", features['kurt'])
+    features['skew'] = stats.skew(rr_intervals)
+    print("skew: ", features['skew'])
 
-    # Calculate frequency-domain HRV metrics
-    f, Pxx = signal.welch(rr_intervals, fs=fs)
-    vlf = (f <= 0.04)
-    lf = (0.04 <= f) & (f <= 0.15)
-    hf = (0.15 < f) & (f <= 0.4)
-
-    # power in VLF band (<= 0.04 Hz)
-    features['vlf'] = np.trapz(Pxx[vlf], f[vlf])
-    # power in LF band (0.04-0.15 Hz)
-    features['lf'] = np.trapz(Pxx[lf], f[lf])
-    # power in HF band (0.15-0.4 Hz)
-    features['hf'] = np.trapz(Pxx[hf], f[hf])
-    # Total power in all bands
-    features['total_power'] = features['vlf'] + features['lf'] + features['hf']
-    # LF/HF ratio
-    features['lf_hf_ratio'] = features['lf'] / features['hf']
-    # Normalized units of LF and HF
-    features['lf_nu'] = features['lf'] / (features['total_power'] - features['vlf']) * 100
-    features['hf_nu'] = features['hf'] / (features['total_power'] - features['vlf']) * 100
-    # HF/LF ratio
-    features['hf_lf_ratio'] = features['hf'] / features['lf']
 
     # Calculate relative RR intervals
     rr_rel_intervals = np.diff(rr_intervals) / np.mean(rr_intervals)
@@ -69,14 +59,39 @@ def calculate_hrv_features(bpm_data, fs):
     # standard deviation of relative RR intervals divided by RMSSD of relative RR intervals
     features['sdrr_rmssd_rel_rr'] = features['sdrr_rel_rr'] / features['rmssd_rel_rr']
     # Skewness and Kurtosis of relative RR intervals
-    features['skew_rel_rr'] = stats.skew(rr_rel_intervals)
     features['kurt_rel_rr'] = stats.kurtosis(rr_rel_intervals)
+    features['skew_rel_rr'] = stats.skew(rr_rel_intervals)
 
-    # Percentage of power in VLF, LF, and HF bands
-    features['vlf_pct'] = features['vlf'] / features['total_power'] * 100
-    features['lf_pct'] = features['lf'] / features['total_power'] * 100
-    features['hf_pct'] = features['hf'] / features['total_power'] * 100
-
+    # Calculate frequency-domain HRV metrics
+    f, Pxx = signal.welch(rr_intervals, fs=fs)
+    vlf = (f <= 0.04)
+    lf = (0.04 <= f) & (f <= 0.15)
+    hf = (0.15 < f) & (f <= 0.4)
+    p_vlf = np.trapz(Pxx[vlf], f[vlf])
+    p_lf = np.trapz(Pxx[lf], f[lf])
+    p_hf = np.trapz(Pxx[hf], f[hf])
+    # power in VLF band (<= 0.04 Hz)
+    features['vlf'] = np.trapz(Pxx[vlf], f[vlf])
+    # Percentage of power in VLF band
+    features['vlf_pct'] = features['vlf'] / (p_vlf + p_lf + p_hf) * 100
+    # power in LF band (0.04-0.15 Hz)
+    features['lf'] = np.trapz(Pxx[lf], f[lf])
+    # Percentage of power in LF band
+    features['lf_pct'] = features['lf'] / (p_vlf + p_lf + p_hf) * 100
+    # Normalized units of LF
+    features['lf_nu'] = features['lf'] / ((p_vlf + p_lf + p_hf) - features['vlf']) * 100
+    # power in HF band (0.15-0.4 Hz)
+    features['hf'] = np.trapz(Pxx[hf], f[hf])
+    # Percentage of power in HF band
+    features['hf_pct'] = features['hf'] / (p_vlf + p_lf + p_hf) * 100
+    # Normalized units of HF
+    features['hf_nu'] = features['hf'] / ((p_vlf + p_lf + p_hf) - features['vlf']) * 100
+    # Total power in all bands
+    features['total_power'] = features['vlf'] + features['lf'] + features['hf']
+    # LF/HF ratio
+    features['lf_hf_ratio'] = features['lf'] / features['hf']
+    # HF/LF ratio
+    features['hf_lf_ratio'] = features['hf'] / features['lf']
     return features
 
 
@@ -125,13 +140,13 @@ def calculate_features(bpm_data, gsr_data):
     return features
 
 
-def read_serial(port='COM1', baudrate=9600):
+def read_serial(port='COM7', baudrate=9600):
     ser = serial.Serial(port, baudrate, timeout=1)
     name_of_subject = input("Enter the name of the subject: ")
     bpm_data = []
     gsr_data = []
     start_time = time.time()
-    end_time = start_time + 20  # if you want to run for 5 minutes, change this to 300
+    end_time = start_time + 100  # if you want to run for 5 minutes, change this to 300
     while time.time() < end_time:
         if ser.in_waiting > 0:
             values = ser.readline().decode().strip().split(',')
