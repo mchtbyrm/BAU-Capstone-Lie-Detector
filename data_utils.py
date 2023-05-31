@@ -9,7 +9,7 @@ from imblearn.over_sampling import RandomOverSampler
 
 # read the dataset from the csv file
 def read_dataset(file, cols):
-    df = pd.read_csv(file, names=cols, nrows=1000)
+    df = pd.read_csv(file, names=cols)
 
     # Exclude specified columns
     df = df.drop(columns=["MEDIAN_RR", "HR", "sampen", "higuci", "datasetId", "MEDIAN_REL_RR"])
@@ -28,8 +28,8 @@ def read_dataset(file, cols):
 # show the histograms of the dataset for each feature
 def show_histograms(df, cols):
     for label in cols[:-1]:
-        plt.hist(df[df["Class"] == 1][label], color='blue', label='Truth', alpha=0.7, density=True)
-        plt.hist(df[df["Class"] == 0][label], color='red', label='Lie', alpha=0.7, density=True)
+        plt.hist(df[df["condition"] == 1][label], color='blue', label='Truth', alpha=0.7, density=True)
+        plt.hist(df[df["condition"] == 0][label], color='red', label='Lie', alpha=0.7, density=True)
         plt.title(label)
         plt.ylabel("Probability")
         plt.xlabel(label)
@@ -75,24 +75,19 @@ def oversample_data(x, y):
 # the range of the values of the other feature is 0-1000
 def scale_data(x, mean=None, std=None):
     if mean is not None and std is not None:
-        # Select all columns except the first one
-        data_to_scale = x[:, 1:]
-        scaled_data = (data_to_scale - mean) / std
-        # Concatenate the first column and the scaled data horizontally
-        scaled_data = np.insert(scaled_data, 0, x[:, 0], axis=1)  # insert the first column
+        scaled_data = (x - mean) / std
         print("*******************************************")
         print("Scaled data: ", scaled_data)
         print("*******************************************")
         return scaled_data
     else:
         scaler = StandardScaler()
-        x_scaled = scaler.fit_transform(x[:, 1:])  # scale all the columns except the first one
-        x_scaled_with_first_column = np.insert(x_scaled, 0, x[:, 0], axis=1)  # insert the first column
+        x_scaled = scaler.fit_transform(x)
         print("*******************************************")
         print("Mean: ", scaler.mean_)
         print("Standard deviation: ", scaler.scale_)
         print("*******************************************")
-        return x_scaled_with_first_column, scaler.mean_, scaler.scale_
+        return x_scaled, scaler.mean_, scaler.scale_
 
 
 # reshape the data. this is important because the data must be in the shape (n_samples, n_features)

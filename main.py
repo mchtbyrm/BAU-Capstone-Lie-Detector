@@ -54,7 +54,7 @@ print(train_data.shape)
 print(test_data.shape)
 
 df_scaled = pd.DataFrame(x_train, columns=cols2[:-1])
-df_scaled['Class'] = y_train
+df_scaled['condition'] = y_train
 print(df_scaled.head())
 
 # model, predictions = k_nearest_neighbors(x_train, y_train, x_test)
