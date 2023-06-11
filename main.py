@@ -57,25 +57,20 @@ df_scaled = pd.DataFrame(x_train, columns=cols2[:-1])
 df_scaled['condition'] = y_train
 print(df_scaled.head())
 
-# model, predictions = k_nearest_neighbors(x_train, y_train, x_test)
-model = k_nearest_neighbors(train_data, test_data)
+model, predictions = k_nearest_neighbors(x_train, y_train, x_test)
 
 # model, predictions = logistic_regression(x_train, y_train, x_test)
-# model = logistic_regression(train_data, test_data)
 
 # model, predictions = gaussian_naive_bayes(x_train, y_train, x_test)
-# model = gaussian_naive_bayes(train_data, test_data)
 
 # model, predictions = support_vector_machines(x_train, y_train, x_test)
-# model = support_vector_machines(train_data, test_data)
 
 # model, predictions = decision_tree(x_train, y_train, x_test)
-# model = decision_tree(train_data, test_data)
 
 # model, predictions = random_forest(x_train, y_train, x_test)
-# model = random_forest(train_data, test_data)
 
-# evaluate_model(y_test, predictions)
+if predictions is not None:
+    evaluate_model(y_test, predictions)
 
 
 ui = GUI(model, mean, std)

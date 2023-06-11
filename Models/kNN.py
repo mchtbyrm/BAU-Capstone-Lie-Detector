@@ -14,8 +14,8 @@ def k_nearest_neighbors(x_train=None, y_train=None, x_test=None):
     if os.path.exists(model_filename):
         # Load the existing model from disk
         model = joblib.load(model_filename)
+        predictions = None
         print("Model loaded from disk")
-        return model
     else:
         # Model file doesn't exist, train the model
         params = choose_k_with_gridsearch(x_train, y_train)
@@ -28,7 +28,7 @@ def k_nearest_neighbors(x_train=None, y_train=None, x_test=None):
 
         # Make predictions
         predictions = model.predict(x_test)
-        return model, predictions
+    return model, predictions
 
 
 def choose_k_with_gridsearch(x_train, y_train):
