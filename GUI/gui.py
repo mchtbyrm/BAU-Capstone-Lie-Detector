@@ -22,8 +22,8 @@ class GUI:
 
         # Dropdown for selecting the serial port
         self.port_var = tk.StringVar(self.root)
-        self.port_var.set("Select Port")  # default value
-        self.port_options = self.get_serial_ports()
+        self.port_options, default_port = self.get_serial_port()
+        self.port_var.set(default_port)  # set default selected port
         self.port_menu = tk.OptionMenu(self.root, self.port_var, *self.port_options)
         tk.Label(self.root, text="Select Arduino Port:").pack()
         self.port_menu.pack()
@@ -61,10 +61,27 @@ class GUI:
 
         self.root.mainloop()
 
-    def get_serial_ports(self):
+    def get_serial_port(self):
         import serial.tools.list_ports
         ports = serial.tools.list_ports.comports()
-        return [port.device for port in ports]
+        port_list = []
+        arduino_vid_pid = [(0x2341, 0x0043), (0x2341, 0x0001)]  # Common VID and PID pairs for Arduino
+        selected_port = None
+
+        for p in ports:
+            vid = p.vid
+            pid = p.pid
+            port_info = f"{p.device}: {p.description} ({p.manufacturer})"
+            port_list.append(port_info)
+            # Check if the VID and PID for the port match common Arduino VID and PID pairs
+            if (vid, pid) in arduino_vid_pid:
+                selected_port = p.device
+
+        # If Arduino not found, select the first port in the list, if available
+        if selected_port is None and port_list:
+            selected_port = ports[0].device
+
+        return port_list, selected_port
 
     def find_arduino_port(self):
         import serial.tools.list_ports
@@ -82,11 +99,13 @@ class GUI:
     def start_stop_clicked(self):
         if not self.running:
             print("Start button clicked")
-            port = self.find_arduino_port()
-            if port == "Select Port":
-                print("Please select a port.")
-                return
+            port_info = self.port_var.get()  # Get the selected port information from the dropdown
+            port = port_info.split(":")[0]  # Extract the port name
             print(f"Arduino port: {port}")
+
+            # Hide the labels
+            self.info_label.pack_forget()
+            self.info_label2.pack_forget()
 
             # Hide the labels
             self.info_label.pack_forget()
@@ -102,9 +121,6 @@ class GUI:
             print("Stop button clicked")
             self.running = False  # set the flag to False to indicate that the test is not running
             self.start_button.config(text="Start")
-            # Show the labels again
-            self.info_label.pack()
-            self.info_label2.pack()
 
     def reset_plots(self):
         self.line_hr.set_data([], [])
