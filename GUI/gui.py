@@ -13,6 +13,7 @@ from generate_features import calculate_features
 class GUI:
     def __init__(self, model, mean, std):
         self.root = tk.Tk()
+        self.root.title("Lie Detector")
         self.model = model
         self.mean = mean
         self.std = std
@@ -56,7 +57,7 @@ class GUI:
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(side='top', fill='both', expand=1)
 
-        self.output_label = tk.Label(self.root, text="Analyzing...", font=("Helvetica", 16), width=1200)
+        self.output_label = tk.Label(self.root, text="Waiting to start", font=("Helvetica", 16), width=1200)
         self.output_label.pack()
 
         self.root.mainloop()
@@ -82,19 +83,6 @@ class GUI:
             selected_port = ports[0].device
 
         return port_list, selected_port
-
-    def find_arduino_port(self):
-        import serial.tools.list_ports
-        ports = list(serial.tools.list_ports.comports())
-        arduino_vid_pid = [(0x2341, 0x0043), (0x2341, 0x0001)]  # Common VID and PID pairs for Arduino
-
-        for p in ports:
-            vid = p.vid
-            pid = p.pid
-            # Check if the VID and PID for the port match common Arduino VID and PID pairs
-            if (vid, pid) in arduino_vid_pid:
-                return p.device
-        return 'COM6'
 
     def start_stop_clicked(self):
         if not self.running:
