@@ -20,11 +20,20 @@ class GUI:
 
         self.root.geometry("1000x650")
 
-        info_label = tk.Label(self.root, text="Please connect the Arduino to the computer")
-        info_label.pack()
+        # Dropdown for selecting the serial port
+        self.port_var = tk.StringVar(self.root)
+        self.port_var.set("Select Port")  # default value
+        self.port_options = self.get_serial_ports()
+        self.port_menu = tk.OptionMenu(self.root, self.port_var, *self.port_options)
+        tk.Label(self.root, text="Select Arduino Port:").pack()
+        self.port_menu.pack()
 
-        info_label2 = tk.Label(self.root, text="To start the test, click the start button")
-        info_label2.pack()
+        # Storing labels as instance variables
+        self.info_label = tk.Label(self.root, text="Please connect the Arduino to the computer")
+        self.info_label.pack()
+
+        self.info_label2 = tk.Label(self.root, text="To start the test, click the start button")
+        self.info_label2.pack()
 
         self.start_button = tk.Button(self.root, text="Start", command=self.start_stop_clicked)
         self.start_button.pack()
@@ -52,11 +61,21 @@ class GUI:
 
         self.root.mainloop()
 
+    def get_serial_ports(self):
+        import serial.tools.list_ports
+        ports = serial.tools.list_ports.comports()
+        return [port.device for port in ports]
+
     def find_arduino_port(self):
         import serial.tools.list_ports
         ports = list(serial.tools.list_ports.comports())
+        arduino_vid_pid = [(0x2341, 0x0043), (0x2341, 0x0001)]  # Common VID and PID pairs for Arduino
+
         for p in ports:
-            if "Arduino" in p.manufacturer:  # check for the Arduino name in the manufacturer field
+            vid = p.vid
+            pid = p.pid
+            # Check if the VID and PID for the port match common Arduino VID and PID pairs
+            if (vid, pid) in arduino_vid_pid:
                 return p.device
         return 'COM6'
 
@@ -64,7 +83,15 @@ class GUI:
         if not self.running:
             print("Start button clicked")
             port = self.find_arduino_port()
+            if port == "Select Port":
+                print("Please select a port.")
+                return
             print(f"Arduino port: {port}")
+
+            # Hide the labels
+            self.info_label.pack_forget()
+            self.info_label2.pack_forget()
+
             self.running = True  # set the flag to True to indicate that the test is running
             self.start_button.config(text="Stop")
             self.reset_plots()  # reset the plots
@@ -75,6 +102,9 @@ class GUI:
             print("Stop button clicked")
             self.running = False  # set the flag to False to indicate that the test is not running
             self.start_button.config(text="Start")
+            # Show the labels again
+            self.info_label.pack()
+            self.info_label2.pack()
 
     def reset_plots(self):
         self.line_hr.set_data([], [])
@@ -99,8 +129,8 @@ class GUI:
         start_time = time.time()
         data_hr = []
         data_gsr = []
-        update_interval = 10  # Number of rows after which you want to update the model
-        row_counter = time.time()  # to keep track of the number of rows added
+        update_interval = 15  # Number of rows after which you want to update the model
+        row_counter = time.time()  # Initialize row counter
 
         ser = serial.Serial(port, 9600)
         while self.running:  # loop while the test is running
@@ -122,11 +152,12 @@ class GUI:
                         print("Invalid data received")
                         continue
             else:
-                time.sleep(0.5)
+                time.sleep(0.3)
+
 
             # Update the model if the row counter has reached the update interval
             if row_counter + update_interval < time.time() and len(data_hr) > 40 and len(data_gsr) > 40:
-                row_counter = time.time()
+                row_counter = time.time() # Reset row counter
                 print(len(data_hr))
                 print(len(data_gsr))
                 if len(data_hr) > 40 or len(data_gsr) > 40:
