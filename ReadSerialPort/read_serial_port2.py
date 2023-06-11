@@ -64,12 +64,12 @@ def read_extract_scale_predict(port, model, mean, std, ui):
                     continue
         else:
             time.sleep(1)
-        if len(data_hr) >= 50 and len(data_gsr) >= 50:
+        if len(data_hr) >= 60 and len(data_gsr) >= 60:
             print(len(data_hr))
             print(len(data_gsr))
-            if len(data_hr) > 50 or len(data_gsr) > 50:
-                data_hr = data_hr[-50:]
-                data_gsr = data_gsr[-50:]
+            if len(data_hr) > 60 or len(data_gsr) > 60:
+                data_hr = data_hr[-60:]
+                data_gsr = data_gsr[-60:]
             features = calculate_features(data_hr, data_gsr)
             features = features.reshape(1, -1)
             print(features)

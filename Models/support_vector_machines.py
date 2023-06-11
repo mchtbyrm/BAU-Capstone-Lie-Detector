@@ -6,7 +6,8 @@ def support_vector_machines(x_train, y_train, x_test):
     # find the best hyperparameters
     params = grid_search_for_svm(x_train, y_train)
     # create the model
-    model = SVC(C=params['C'], kernel=params['kernel'])
+    model = SVC(C=params['C'], kernel=params['kernel'], gamma=params['gamma'])
+    # model = SVC(C=0.1, kernel='linear', gamma=1)
     # train the model
     model.fit(x_train, y_train)
     # make predictions

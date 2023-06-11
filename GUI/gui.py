@@ -99,8 +99,8 @@ class GUI:
         start_time = time.time()
         data_hr = []
         data_gsr = []
-        update_interval = 20  # Number of rows after which you want to update the model
-        row_counter = 0  # Initialize row counter
+        update_interval = 10  # Number of rows after which you want to update the model
+        row_counter = time.time()  # to keep track of the number of rows added
 
         ser = serial.Serial(port, 9600)
         while self.running:  # loop while the test is running
@@ -122,13 +122,11 @@ class GUI:
                         print("Invalid data received")
                         continue
             else:
-                time.sleep(1)
-
-            row_counter += 1  # Increment row counter
+                time.sleep(0.5)
 
             # Update the model if the row counter has reached the update interval
-            if row_counter >= update_interval:
-                row_counter = 0  # Reset row counter
+            if row_counter + update_interval < time.time() and len(data_hr) > 40 and len(data_gsr) > 40:
+                row_counter = time.time()
                 print(len(data_hr))
                 print(len(data_gsr))
                 if len(data_hr) > 40 or len(data_gsr) > 40:

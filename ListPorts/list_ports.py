@@ -1,12 +1,13 @@
 import serial.tools.list_ports
 
 
-def list_all_available_serial_ports():
-    # List available serial ports
-    ports = serial.tools.list_ports.comports()
-    for port in ports:
-        print(port.device)
+def list_ports():
+    ports = list(serial.tools.list_ports.comports())
+    for p in ports:
+        print(
+            f"Device: {p.device}, Name: {p.name}, Description: {p.description}, HWID: {p.hwid}, VID: {p.vid}, PID: {p.pid}, Serial Number: {p.serial_number}, Manufacturer: {p.manufacturer}")
+
 
 
 if __name__ == '__main__':
-    list_all_available_serial_ports()
+    list_ports()
