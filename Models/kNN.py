@@ -7,7 +7,7 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 # k is the number of neighbors
-def k_nearest_neighbors(x_train, y_train, x_test=None):
+def k_nearest_neighbors(x_train=None, y_train=None, x_test=None):
     model_filename = 'knn_model_lie_detector.joblib'
 
     # Check if the model file already exists

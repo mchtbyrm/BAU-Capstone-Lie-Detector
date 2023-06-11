@@ -79,4 +79,4 @@ model = k_nearest_neighbors(train_data, test_data)
 
 
 ui = GUI(model, mean, std)
-ui.show_ui()
+# ui.show_ui()

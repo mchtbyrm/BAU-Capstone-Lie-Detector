@@ -1,7 +1,6 @@
 import numpy as np
 from scipy import stats, signal
 
-
 def calculate_hrv_features(bpm_data, fs):
     # Calculate time-domain HRV metrics
     features = {}
